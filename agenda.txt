@@ -1,0 +1,13 @@
+Format: Code Retreat
+
+Einleitung, 3 Runden a 45 Minuten, Abschluss (3 h gesamt)
+
+# Einleitung
+
+# Runde 1: Currying + partielle Funktionsaufrufe
+
+# Runde 2: Funktionskomposition, Funktionen höherer Ordnung
+
+# Runde 3: Kombinatoren, Algebraische Datentypen, Monaden
+
+# Abschluss
