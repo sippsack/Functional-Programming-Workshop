@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
-    implementation("com.google.guava:guava:26.0-jre")
+    implementation("io.vavr:vavr:0.10.0")
 
     // Use JUnit test framework
     testImplementation("junit:junit:4.12")
