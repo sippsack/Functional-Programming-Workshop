@@ -21,8 +21,8 @@ public class SideEffect {
 
     @Test
     public void movingTheSideEffectAwayFromTheCore(){
-        CreditCard creditCard = new CreditCard();
-        Cafe cafe = new Cafe();
+        var creditCard = new CreditCard();
+        var cafe = new Cafe();
 
         Tuple2<Coffee, Charge> cup = cafe.buyCoffee(creditCard);
 
@@ -31,8 +31,8 @@ public class SideEffect {
 
     @Test
     public void buyMultipleCups(){
-        CreditCard creditCard = new CreditCard();
-        Cafe cafe = new Cafe();
+        var creditCard = new CreditCard();
+        var cafe = new Cafe();
 
         var cups = cafe.buyCoffees(creditCard, 4);
 
