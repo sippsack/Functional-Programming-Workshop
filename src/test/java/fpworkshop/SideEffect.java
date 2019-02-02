@@ -40,6 +40,17 @@ public class SideEffect {
         assertThat(cups._2.creditCard, is(equalTo(creditCard)));
     }
 
+    @Test
+    public void americanExpressSometimesTimesOut(){
+        var americanExpress = PaymentProvider.americanExpress();
+        var creditCard = new CreditCard();
+        var cafe = new Cafe();
+
+        var cups = cafe.buyCoffees(creditCard, 4);
+
+        americanExpress.process(cups._2);
+    }
+
     class Cafe {
         Tuple2<Coffee, Charge> buyCoffee(CreditCard creditCard) {
             var cup = new Coffee();
@@ -58,14 +69,6 @@ public class SideEffect {
     }
 
     private class CreditCard {
-        void charge(BigDecimal price) {
-            try {
-                Thread.sleep(5_000);
-                if (Math.random() > 0.2) throw new IllegalStateException("The server does not respond");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private static class Charge {
@@ -108,6 +111,25 @@ public class SideEffect {
                     "creditCard=" + creditCard +
                     ", price=" + price +
                     '}';
+        }
+    }
+
+    private interface PaymentProvider {
+        static PaymentProvider americanExpress() {
+            return new PaymentProvider() {
+                @Override
+                public void process(Charge charge) {
+                    try {
+                        Thread.sleep(5_000);
+                        if (Math.random() > 0.2) throw new IllegalStateException("The server does not respond");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+
+        default void process(Charge charge) {
         }
     }
 }
