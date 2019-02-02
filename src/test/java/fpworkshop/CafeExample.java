@@ -3,32 +3,64 @@
  */
 package fpworkshop;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+import io.vavr.collection.List;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.function.Function;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 public class CafeExample {
 
     @Test
-    public void buyingCupOfCoffee(){
+    public void movingTheSideEffectAwayFromTheCore(){
         var creditCard = new CreditCard();
         var cafe = new Cafe();
 
-        Coffee cup = cafe.buyCoffee(creditCard);
+        Tuple2<Coffee, Charge> cup = cafe.buyCoffee(creditCard);
 
         assertThat(cup, notNullValue());
     }
 
+    @Test
+    public void buyMultipleCups(){
+        var creditCard = new CreditCard();
+        var cafe = new Cafe();
+
+        var cups = cafe.buyCoffees(creditCard, 4);
+
+        assertThat(cups._2.price, is(equalTo(new BigDecimal(4))));
+        assertThat(cups._2.creditCard, is(equalTo(creditCard)));
+    }
+
+    @Test
+    public void americanExpressSometimesTimesOut(){
+        var americanExpress = PaymentProvider.americanExpress();
+        var creditCard = new CreditCard();
+        var cafe = new Cafe();
+
+        var cups = cafe.buyCoffees(creditCard, 4);
+
+        americanExpress.process(cups._2);
+    }
+
     class Cafe {
-        Coffee buyCoffee(CreditCard creditCard) {
+        Tuple2<Coffee, Charge> buyCoffee(CreditCard creditCard) {
             var cup = new Coffee();
+            return Tuple.of(cup, Charge.of(creditCard, cup.price));
+        }
 
-            creditCard.charge(cup.price);
-
-            return cup;
+        Tuple2<List<Coffee>, Charge> buyCoffees(CreditCard creditCard, int n) {
+            var purchases = List.fill(n, buyCoffee(creditCard));
+            var coffeesAndCharges = purchases.unzip(Function.identity());
+            return coffeesAndCharges.map2(charges -> charges.reduce(Charge::combine));
         }
     }
 
@@ -37,13 +69,67 @@ public class CafeExample {
     }
 
     private class CreditCard {
-        void charge(BigDecimal price) {
-            try {
-                Thread.sleep(5_000);
-                if (Math.random() > 0.2) throw new IllegalStateException("The server does not respond");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    }
+
+    private static class Charge {
+        private final CreditCard creditCard;
+        private final BigDecimal price;
+
+        private Charge(CreditCard creditCard, BigDecimal price) {
+            this.creditCard = creditCard;
+            this.price = price;
+        }
+
+        static Charge of(CreditCard creditCard, BigDecimal price) {
+            return new Charge(creditCard, price);
+        }
+
+        Charge combine(Charge other) {
+            if(creditCard.equals(other.creditCard)) {
+                return new Charge(creditCard, price.add(other.price));
             }
+            throw new IllegalArgumentException("Can't combine charges to different cards");
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Charge charge = (Charge) o;
+            return Objects.equals(creditCard, charge.creditCard) &&
+                    Objects.equals(price, charge.price);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(creditCard, price);
+        }
+
+        @Override
+        public String toString() {
+            return "Charge{" +
+                    "creditCard=" + creditCard +
+                    ", price=" + price +
+                    '}';
+        }
+    }
+
+    private interface PaymentProvider {
+        static PaymentProvider americanExpress() {
+            return new PaymentProvider() {
+                @Override
+                public void process(Charge charge) {
+                    try {
+                        Thread.sleep(5_000);
+                        if (Math.random() > 0.2) throw new IllegalStateException("The server does not respond");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+
+        default void process(Charge charge) {
         }
     }
 }
