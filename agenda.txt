@@ -1,0 +1,64 @@
+Format: Code Retreat
+
+Einleitung, 3 Runden a 45 Minuten, Abschluss (3 h gesamt)
+
+# Einleitung
+
+# Runde 1: Currying + partielle Funktionsaufrufe
+int a = 0;
+int b = 1;
+int c = a + b;
+
+// Wie können wir jetzt viele Addierer bauen?
+// Was ist ein Addierer?
+// Eine Funktion
+// Was Für eine Funktion?
+// Ich nehme Zahl und gebe eine Funktion zurück die eine andere Zahl nimmt und dann beide Zahlen addiert
+// Wie bilde ich das als Java Typ ab?
+
+public int add(int a, int b) {
+  return a + b;
+}
+
+// Das ist kein Addierer
+
+
+public Function<Integer, Integer> adder(int a) {
+  return b -> a + b;
+}
+
+addOne = adder(1);
+addOne.apply(3); // 4
+
+// Wie geht das funktionaler?
+// Was heist funktionaler?
+// Nur Funktionen
+
+// Das ist eine Funktion
+BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
+addOne = add.apply(1,3);
+
+// Aber kein kein Adder
+
+Function<Integer, Function<Integer, Integer>> adder = a -> b -> a + b;
+addOne = adder.apply(1);
+addOne.apply(3); // 4
+
+Function<Integer, Function<Integer, Integer>> curry2(BiFunction<Integer, Integer, Integer> f) {
+  return a -> b -> f.apply(a, b);
+}
+
+BiFunction<Integer, Integer, Integer> f uncurry2(Function<Integer, Function<Integer, Integer>> f) {
+  return (a, b) -> f.apply(a).apply(b);
+}
+
+Function2::uncurry (BiFunction)
+
+
+
+
+# Runde 2: Funktionskomposition, Funktionen höherer Ordnung
+
+# Runde 3: Kombinatoren, Algebraische Datentypen, Monaden
+
+# Abschluss
