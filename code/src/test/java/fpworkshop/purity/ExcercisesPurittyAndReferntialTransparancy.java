@@ -1,4 +1,4 @@
-package fpworkshop;
+package fpworkshop.purity;
 
 import org.junit.Test;
 
