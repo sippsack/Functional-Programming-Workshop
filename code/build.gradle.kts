@@ -24,11 +24,17 @@ dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation("io.vavr:vavr:0.10.0")
 
-    // Use JUnit test framework
-    testImplementation("junit:junit:4.12")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.1.0")
+    testImplementation("org.hamcrest:hamcrest:2.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.1.0")
+
 }
 
 application {
     // Define the main class for the application
     mainClassName = "fpworkshop.App"
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
