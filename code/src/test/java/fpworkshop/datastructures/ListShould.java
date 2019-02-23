@@ -1,11 +1,13 @@
 package fpworkshop.datastructures;
 
+import io.vavr.control.Option;
 import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static fpworkshop.datastructures.ListShould.List.*;
+import static io.vavr.API.TODO;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -29,6 +31,34 @@ public class ListShould {
         var expected = cons("Hello", cons("JavaLand", nil()));
 
         assertThat(list, is(equalTo(expected)));
+    }
+
+    // Exercise 1
+    // head() throws an exception when it is called on an empty list.
+    // This is a side effect.
+    // We need a type to represent an optional value.
+    // That is what vavrs Option is for.
+    // Implement a function headOption() which returns an Option with the head value if this is Cons.
+    // Otherwise it returns an empty Option.
+
+    @Test
+    void beSomeForHeadOfNonEmptyList(){
+        var list = listOf("Hello", "JavaLand");
+
+        var headOption = list.headOption();
+
+        assertThat(headOption.isDefined(), is(true));
+        assertThat(headOption.get(), is("Hello"));
+    }
+
+    @Test
+    void beNoneForHeadOfEmptyList(){
+        var list = listOf();
+
+        var headOption = list.headOption();
+
+        assertThat(headOption.isDefined(), is(false));
+        assertThat(headOption, is(Option.none()));
     }
 
     interface List<E> {
@@ -61,6 +91,10 @@ public class ListShould {
                 return ((Cons<E>) this).head;
             }
             throw new NoSuchElementException("head of empty list");
+        }
+
+        default Option<E> headOption(){
+            return TODO("head option");
         }
     }
 
