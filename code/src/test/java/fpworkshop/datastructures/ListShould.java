@@ -130,8 +130,12 @@ public class ListShould {
         }
 
         default <T> List<T> map(Function1<? super E, ? extends T> mapper){
-            return TODO("Implement map here");
-        };
+            if(this instanceof Nil){
+                return Nil.instance();
+            }
+            var self = (Cons<E>) this;
+            return cons(mapper.apply(self.head), self.tail.map(mapper));
+        }
     }
 
     final static class Nil<A> implements List<A> {
