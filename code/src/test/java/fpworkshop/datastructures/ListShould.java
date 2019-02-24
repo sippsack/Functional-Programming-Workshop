@@ -1,10 +1,12 @@
 package fpworkshop.datastructures;
 
+import io.vavr.Function1;
 import io.vavr.control.Option;
 import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static fpworkshop.datastructures.ListShould.List.*;
 import static io.vavr.API.TODO;
@@ -61,6 +63,20 @@ public class ListShould {
         assertThat(headOption, is(Option.none()));
     }
 
+    // Exercise 2
+    // Mapping a list of values to another list with other values is very common.
+    // Please implement the corresponding operation.
+    // Remember: Go by the types.
+    @Test
+    void beMappable(){
+        var list = listOf('a', 'b');
+
+        var mappedList = list.map(character -> (int) character);
+
+        assertThat(mappedList, equalTo(listOf(97, 98)));
+    }
+
+
     interface List<E> {
 
         static <E> List<E> listOf(E... elements){
@@ -94,14 +110,24 @@ public class ListShould {
         }
 
         default Option<E> headOption(){
-            return TODO("head option");
+            if(this instanceof Cons){
+                return Option.of(((Cons<E>) this).head);
+            }
+            return Option.none();
         }
+
+        <T> List<T> map(Function1<? super E, ? extends T> mapper);
     }
 
     final static class Nil<A> implements List<A> {
         private static final Nil<?> instance = new Nil<>();
 
         private Nil(){}
+
+        @Override
+        public <T> List<T> map(Function1<? super A, ? extends T> mapper) {
+            return TODO("implement map");
+        }
 
         @SuppressWarnings("unchecked")
         public static <B> List<B> instance(){
@@ -113,6 +139,7 @@ public class ListShould {
             return "Nil{}";
         }
     }
+
     final static class Cons<A> implements List<A> {
         public final A head;
         public final List<A> tail;
@@ -120,6 +147,11 @@ public class ListShould {
         public Cons(A head, List<A> tail){
             this.head = head;
             this.tail = tail;
+        }
+
+        @Override
+        public <T> List<T> map(Function1<? super A, ? extends T> mapper) {
+            return TODO("implement map");
         }
 
         @Override
