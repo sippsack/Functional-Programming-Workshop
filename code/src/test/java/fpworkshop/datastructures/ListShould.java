@@ -85,6 +85,10 @@ public class ListShould {
         assertThat(mappedList, equalTo(List.<Integer>nil()));
     }
 
+    // Exercise 3
+    // Reimplement the map operator in the list interface
+
+
 
     interface List<E> {
 
@@ -125,18 +129,15 @@ public class ListShould {
             return Option.none();
         }
 
-        <T> List<T> map(Function1<? super E, ? extends T> mapper);
+        default <T> List<T> map(Function1<? super E, ? extends T> mapper){
+            return TODO("Implement map here");
+        };
     }
 
     final static class Nil<A> implements List<A> {
         private static final Nil<?> instance = new Nil<>();
 
         private Nil(){}
-
-        @Override
-        public <T> List<T> map(Function1<? super A, ? extends T> mapper) {
-            return instance();
-        }
 
         @SuppressWarnings("unchecked")
         public static <B> List<B> instance(){
@@ -156,11 +157,6 @@ public class ListShould {
         public Cons(A head, List<A> tail){
             this.head = head;
             this.tail = tail;
-        }
-
-        @Override
-        public <T> List<T> map(Function1<? super A, ? extends T> mapper) {
-            return cons(mapper.apply(this.head), tail.map(mapper));
         }
 
         @Override
