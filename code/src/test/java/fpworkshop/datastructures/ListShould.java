@@ -76,6 +76,15 @@ public class ListShould {
         assertThat(mappedList, equalTo(listOf(97, 98)));
     }
 
+    @Test
+    void emptyListToEmptyList(){
+        var list = List.<Character>nil();
+
+        List<Integer> mappedList = list.map(character -> (int) character);
+
+        assertThat(mappedList, equalTo(List.<Integer>nil()));
+    }
+
 
     interface List<E> {
 
@@ -126,7 +135,7 @@ public class ListShould {
 
         @Override
         public <T> List<T> map(Function1<? super A, ? extends T> mapper) {
-            return TODO("implement map");
+            return instance();
         }
 
         @SuppressWarnings("unchecked")
@@ -151,7 +160,7 @@ public class ListShould {
 
         @Override
         public <T> List<T> map(Function1<? super A, ? extends T> mapper) {
-            return TODO("implement map");
+            return cons(mapper.apply(this.head), tail.map(mapper));
         }
 
         @Override
